@@ -2,7 +2,7 @@
 
 namespace CamInv\EInvoice\Support;
 
-use CamInv\EInvoice\Exceptions\AuthenticationException;
+use CamInv\EInvoice\Exceptions\CamInvException;
 
 /**
  * Provides automatic token refresh on 401 responses for API clients.
@@ -22,7 +22,7 @@ trait HasTokenRefresh
      * @param  callable  $callback  API call to execute (should re-resolve the token internally).
      * @return mixed                The callback's return value.
      *
-     * @throws \CamInv\EInvoice\Exceptions\AuthenticationException
+     * @throws \CamInv\EInvoice\Exceptions\CamInvException
      * @throws \RuntimeException    If the consuming class lacks tokenManager() or merchantId().
      */
     protected function withTokenRefresh(callable $callback): mixed
@@ -35,7 +35,7 @@ trait HasTokenRefresh
 
         try {
             return $callback();
-        } catch (AuthenticationException $e) {
+        } catch (CamInvException $e) {
             if ($e->getStatusCode() !== 401) {
                 throw $e;
             }
