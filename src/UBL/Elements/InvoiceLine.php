@@ -60,13 +60,17 @@ class InvoiceLine
         $item = $doc->createElement('cac:Item');
 
         if (! empty($data['description'])) {
-            $item->appendChild($doc->createElement('cbc:Description', $data['description']));
+            $el = $doc->createElement('cbc:Description');
+            $el->appendChild($doc->createTextNode(self::sanitizeXml($data['description'])));
+            $item->appendChild($el);
         }
 
         if (! empty($data['name'])) {
-            $item->appendChild($doc->createElement('cbc:Name', $data['name']));
+            $el = $doc->createElement('cbc:Name');
+            $el->appendChild($doc->createTextNode(self::sanitizeXml($data['name'])));
+            $item->appendChild($el);
         }
-
+        
         if (! empty($data['sellers_item_id'])) {
             $sii = $doc->createElement('cac:SellersItemIdentification');
             $sii->appendChild($doc->createElement('cbc:ID', $data['sellers_item_id']));
@@ -104,5 +108,25 @@ class InvoiceLine
         }
 
         $parent->appendChild($price);
+    }
+
+    /**
+     * Strip characters that are illegal in XML 1.0.
+     * Safe characters (&, <, >, etc.) are left alone and will be
+     * properly escaped by createTextNode().
+     */
+    public static function sanitizeXml(?string $value): string
+    {
+        if ($value === null || $value === '') {
+            return '';
+        }
+
+        // XML 1.0 legal characters:
+        // #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]
+        return preg_replace(
+            '/[^\x09\x0A\x0D\x20-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]/u',
+            '',
+            (string) $value
+        );
     }
 }
