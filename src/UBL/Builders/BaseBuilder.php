@@ -2,6 +2,7 @@
 
 namespace CamInv\EInvoice\UBL\Builders;
 
+use CamInv\EInvoice\UBL\XmlSanitizer;
 use DOMDocument;
 
 /**
@@ -229,7 +230,7 @@ abstract class BaseBuilder
         }
 
         if (isset($this->note)) {
-            $root->appendChild($this->doc->createElementNS($cbc, 'cbc:Note', $this->note));
+            XmlSanitizer::appendTextElementNS($this->doc, $root, $cbc, 'cbc:Note', $this->note);
         }
 
         $root->appendChild($this->doc->createElementNS($cbc, 'cbc:DocumentCurrencyCode', $this->currency));

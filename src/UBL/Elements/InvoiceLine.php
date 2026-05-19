@@ -2,6 +2,7 @@
 
 namespace CamInv\EInvoice\UBL\Elements;
 
+use CamInv\EInvoice\UBL\XmlSanitizer;
 use DOMDocument;
 use DOMElement;
 
@@ -60,11 +61,15 @@ class InvoiceLine
         $item = $doc->createElement('cac:Item');
 
         if (! empty($data['description'])) {
-            $item->appendChild($doc->createElement('cbc:Description', $data['description']));
+            $el = $doc->createElement('cbc:Description');
+            $el->appendChild($doc->createTextNode(XmlSanitizer::sanitize($data['description'])));
+            $item->appendChild($el);
         }
 
         if (! empty($data['name'])) {
-            $item->appendChild($doc->createElement('cbc:Name', $data['name']));
+            $el = $doc->createElement('cbc:Name');
+            $el->appendChild($doc->createTextNode(XmlSanitizer::sanitize($data['name'])));
+            $item->appendChild($el);
         }
 
         if (! empty($data['sellers_item_id'])) {
@@ -85,7 +90,9 @@ class InvoiceLine
                 $oc->appendChild($doc->createElement('cbc:IdentificationCode', $data['origin_country']['identification_code']));
             }
             if (! empty($data['origin_country']['name'])) {
-                $oc->appendChild($doc->createElement('cbc:Name', $data['origin_country']['name']));
+                $el = $doc->createElement('cbc:Name');
+                $el->appendChild($doc->createTextNode(XmlSanitizer::sanitize($data['origin_country']['name'])));
+                $oc->appendChild($el);
             }
             $item->appendChild($oc);
         }
