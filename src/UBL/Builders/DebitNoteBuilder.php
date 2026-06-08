@@ -47,7 +47,7 @@ class DebitNoteBuilder extends BaseBuilder
     {
         parent::buildHeader($root);
 
-        if ($this->originalInvoiceUUID && ! $this->originalInvoiceId) {
+        if ($this->originalInvoiceUUID && $this->originalInvoiceId) {
             Elements\BillingReference::build($this->doc, $root, $this->originalInvoiceId, $this->originalInvoiceUUID);
         }
     }
